@@ -22,11 +22,11 @@ const multerConfig = {
         if (
             file.mimetype === 'image/jpeg' ||
             file.mimetype === 'image/png' ||
-            file.mimetype === 'image/png'
+            file.mimetype === 'image/peg'
         ) {
-            return cb(null, false);
+            return cb(null, true);
         }
-        cb(null, true);
+        cb(null, false);
     },
 };
 

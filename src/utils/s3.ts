@@ -21,17 +21,18 @@ class AwsFileUploader {
     }
 
     public async uploadImage(
-        image: Express.Multer.File
+        image: Express.Multer.File,
+        author: string
     ): Promise<string | Error> {
         try {
             const uploadParams = {
                 Bucket: this.bucketName,
-                Key: image.originalname,
+                Key: `${author}/${image.originalname}`,
                 Body: image.buffer,
             };
 
             await this.s3.send(new PutObjectCommand(uploadParams));
-            return `${this.bucketName}/uploads.png`;
+            return `${this.bucketName}/${author}/${image.originalname}`;
         } catch (error: any) {
             throw new Error(error);
         }

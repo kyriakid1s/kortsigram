@@ -21,6 +21,9 @@ const UserSchema = new Schema(
         posts: {
             type: Array,
         },
+        likedPosts: {
+            type: Array,
+        },
         verified: {
             type: Boolean,
             required: true,

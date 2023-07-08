@@ -1,25 +1,12 @@
 import postModel from './post.model';
 import AwsFileUploader from '../../utils/s3';
 import Post from './post.interface';
+import userModel from '../users/user.model';
 
 class PostService {
     private post = postModel;
+    private user = userModel;
     private s3Client = new AwsFileUploader();
-
-    /**
-     * Upload Photo to S3
-     * We upload photo from PostModel Function
-     */
-    private async uploadToS3(
-        file: Express.Multer.File
-    ): Promise<string | Error> {
-        try {
-            const fileUrl = await this.s3Client.uploadImage(file);
-            return fileUrl;
-        } catch (error: any) {
-            throw new Error(error.message);
-        }
-    }
     /**
      * Upload PostModel to Database
      */
@@ -28,7 +15,10 @@ class PostService {
         author: string
     ): Promise<Post | Error> {
         try {
-            const uploadedFilePath = await this.uploadToS3(file);
+            const uploadedFilePath = await this.s3Client.uploadImage(
+                file,
+                author
+            );
             console.log(uploadedFilePath);
             const post = await this.post.create({
                 author: author,
@@ -39,6 +29,46 @@ class PostService {
             throw new Error(error.message);
         }
     }
-}
+    /**
+     * Like A Post
+     */
 
+    public async likePost(
+        postId: string,
+        username: string
+    ): Promise<boolean | Error> {
+        try {
+            const post = await this.post.findById(postId);
+            const user = await this.user.findOne({ username: username });
+            if (!post || !user) {
+                return false;
+            }
+            const isLikedByUser = post.likes.includes(username);
+            if (isLikedByUser) {
+                const index = post.likes.indexOf(username);
+                post.likes.splice(index, 1);
+                await post.save();
+                return true;
+            }
+            post.likes.push(username);
+            user.likedPosts.push(postId);
+            await user.save();
+            await post.save();
+            return true;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+    /**
+     * Get Posts
+     */
+    public async getPosts(): Promise<Post[] | Error> {
+        try {
+            const posts = await this.post.find({});
+            return posts;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+}
 export default PostService;

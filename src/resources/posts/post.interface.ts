@@ -4,7 +4,7 @@ interface Post extends Document {
     author: string;
     imageURL: string;
     caption: string;
-    likes: number;
+    likes: string[];
 }
 
 export default Post;
