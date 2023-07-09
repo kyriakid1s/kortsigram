@@ -24,6 +24,12 @@ const UserSchema = new Schema(
         likedPosts: {
             type: Array,
         },
+        followers: {
+            type: Array,
+        },
+        following: {
+            type: Array,
+        },
         verified: {
             type: Boolean,
             required: true,

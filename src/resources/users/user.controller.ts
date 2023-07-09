@@ -3,6 +3,7 @@ import HttpException from '../../utils/exceptations/http.exception';
 import Controller from '../../utils/interfaces/controller.interface';
 import validate from './user.validation';
 import validationMiddleware from '../../middlewares/validation.middleware';
+import authenticatedMiddleware from '../../middlewares/authenticated.middleware';
 import UserService from './user.service';
 
 class UserController implements Controller {
@@ -24,6 +25,16 @@ class UserController implements Controller {
             `${this.path}/login`,
             validationMiddleware(validate.login),
             this.login
+        );
+        this.router.put(
+            `${this.path}/:username/follow`,
+            authenticatedMiddleware,
+            this.followUser
+        );
+        this.router.put(
+            `${this.path}/:username/unfollow`,
+            authenticatedMiddleware,
+            this.unfollowUser
         );
     }
 
@@ -64,6 +75,50 @@ class UserController implements Controller {
                 .json({ token });
         } catch (err: any) {
             next(new HttpException(400, err.message));
+        }
+    };
+
+    private followUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const response = await this.UserService.followUser(
+                req.user.id,
+                username
+            );
+            if (!(response instanceof Error)) {
+                if (response.success === true) {
+                    return res.status(201).json({ message: response.message });
+                }
+                return res.status(200).json({ message: response.message });
+            }
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    private unfollowUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const response = await this.UserService.unfollowUser(
+                req.user.id,
+                username
+            );
+            if (!(response instanceof Error)) {
+                if (response.success === true) {
+                    return res.status(201).json({ message: response.message });
+                }
+                return res.status(200).json({ message: response.message });
+            }
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
         }
     };
 }

@@ -6,6 +6,8 @@ interface User extends Document {
     password: string;
     posts: string[];
     likedPosts: string[];
+    following: string[];
+    followers: string[];
     verified: boolean;
     verificationToken: string;
     isValidPassword(password: string): Promise<Error | boolean>;
