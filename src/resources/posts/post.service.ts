@@ -94,9 +94,6 @@ class PostService {
             if (followingPosts == null) {
                 throw new Error("We can't find anything!");
             }
-            const post = followingPosts.following.map(
-                (e: { posts: any[] }) => e.posts
-            );
             return followingPosts.following;
         } catch (err: any) {
             throw new Error(err.message);
