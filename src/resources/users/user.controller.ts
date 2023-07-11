@@ -36,6 +36,16 @@ class UserController implements Controller {
             authenticatedMiddleware,
             this.unfollowUser
         );
+        this.router.get(
+            `${this.path}/:username/followers`,
+            authenticatedMiddleware,
+            this.getFollowers
+        );
+        this.router.get(
+            `${this.path}/:username/following`,
+            authenticatedMiddleware,
+            this.getFollowing
+        );
     }
 
     private register = async (
@@ -119,6 +129,34 @@ class UserController implements Controller {
             }
         } catch (error: any) {
             next(new HttpException(400, error.message));
+        }
+    };
+
+    private getFollowers = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const followers = await this.UserService.getFollowers(username);
+            res.status(200).json({ followers: followers });
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getFollowing = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const following = await this.UserService.getFollowing(username);
+            res.status(200).json({ following: following });
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
         }
     };
 }

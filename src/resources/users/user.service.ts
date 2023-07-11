@@ -65,7 +65,9 @@ class UserService {
             });
             if (!userToFollow || !currentUser) {
                 throw new Error(
-                    'This user does not exist or you are not exist :|'
+                    `This user does not exist or you are not exist ${String.fromCodePoint(
+                        0x1f92f
+                    )}`
                 );
             }
             if (currentUser.username === userToFollow.username) {
@@ -103,7 +105,11 @@ class UserService {
                 username: usernameToUnfollow,
             });
             if (!userToUnfollow || !currentUser) {
-                throw new Error('Cant find user or you.');
+                throw new Error(
+                    `This user does not exist or you are not exist ${String.fromCodePoint(
+                        0x1f92f
+                    )}`
+                );
             }
             if (currentUser.username === userToUnfollow.username) {
                 return {
@@ -134,6 +140,40 @@ class UserService {
                     message: `You not following ${usernameToUnfollow}`,
                 };
             }
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Get Followers
+     */
+
+    public async getFollowers(username: string): Promise<string[] | Error> {
+        try {
+            const user = await this.user.findOne({ username });
+            if (!user) {
+                throw new Error("This user doesn't exist");
+            }
+            const followers = user.followers;
+            return followers;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Get Following
+     */
+
+    public async getFollowing(username: string): Promise<string[] | Error> {
+        try {
+            const user = await this.user.findOne({ username });
+            if (!user) {
+                throw new Error("This user doesn't exist");
+            }
+            const following = user.following;
+            return following;
         } catch (err: any) {
             throw new Error(err.message);
         }
