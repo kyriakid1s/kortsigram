@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import User from './user.interface';
 import bcrypt from 'bcrypt';
 
@@ -18,18 +18,25 @@ const UserSchema = new Schema(
             type: String,
             required: true,
         },
-        posts: {
-            type: Array,
-        },
+        posts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Post',
+            },
+        ],
         likedPosts: {
             type: Array,
         },
         followers: {
             type: Array,
+            ref: 'User',
         },
-        following: {
-            type: Array,
-        },
+        following: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
         verified: {
             type: Boolean,
             required: true,

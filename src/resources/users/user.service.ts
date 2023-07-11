@@ -59,10 +59,14 @@ class UserService {
         usernameToFollow: string
     ): Promise<{ success: boolean; message: string } | Error> {
         try {
-            const currentUser = await this.user.findById(currentUserId);
-            const userToFollow = await this.user.findOne({
-                username: usernameToFollow,
-            });
+            const currentUser = await this.user
+                .findById(currentUserId)
+                .select('_id username email followers following');
+            const userToFollow = await this.user
+                .findOne({
+                    username: usernameToFollow,
+                })
+                .select('_id username email followers following');
             if (!userToFollow || !currentUser) {
                 throw new Error(
                     `This user does not exist or you are not exist ${String.fromCodePoint(
@@ -100,10 +104,14 @@ class UserService {
         usernameToUnfollow: string
     ): Promise<{ success: boolean; message: string } | Error> {
         try {
-            const currentUser = await this.user.findById(currentUserId);
-            const userToUnfollow = await this.user.findOne({
-                username: usernameToUnfollow,
-            });
+            const currentUser = await this.user
+                .findById(currentUserId)
+                .select('_id username email followers following');
+            const userToUnfollow = await this.user
+                .findOne({
+                    username: usernameToUnfollow,
+                })
+                .select('_id username email followers following');
             if (!userToUnfollow || !currentUser) {
                 throw new Error(
                     `This user does not exist or you are not exist ${String.fromCodePoint(
@@ -151,7 +159,10 @@ class UserService {
 
     public async getFollowers(username: string): Promise<string[] | Error> {
         try {
-            const user = await this.user.findOne({ username });
+            const user = await this.user
+                .findOne({ username })
+                .select('_id username email followers following');
+            console.log(user);
             if (!user) {
                 throw new Error("This user doesn't exist");
             }
@@ -168,7 +179,9 @@ class UserService {
 
     public async getFollowing(username: string): Promise<string[] | Error> {
         try {
-            const user = await this.user.findOne({ username });
+            const user = await this.user
+                .findOne({ username })
+                .select('_id username email followers following');
             if (!user) {
                 throw new Error("This user doesn't exist");
             }

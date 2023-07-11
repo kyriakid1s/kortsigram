@@ -1,7 +1,9 @@
 import postModel from './post.model';
 import AwsFileUploader from '../../utils/s3';
 import Post from './post.interface';
+import User from '../users/user.interface';
 import userModel from '../users/user.model';
+import { populate } from 'dotenv';
 
 class PostService {
     private post = postModel;
@@ -19,11 +21,15 @@ class PostService {
                 file,
                 author
             );
-            console.log(uploadedFilePath);
             const post = await this.post.create({
                 author: author,
                 imageURL: uploadedFilePath,
             });
+            const user = await this.user
+                .findOne({ username: author })
+                .select('posts');
+            user?.posts.push(post._id);
+            user?.save();
             return post;
         } catch (error: any) {
             throw new Error(error.message);
@@ -38,8 +44,10 @@ class PostService {
         username: string
     ): Promise<boolean | Error> {
         try {
-            const post = await this.post.findById(postId);
-            const user = await this.user.findOne({ username: username });
+            const post = await this.post.findById(postId).select('-password');
+            const user = await this.user
+                .findOne({ username: username })
+                .select('-password');
             if (!post || !user) {
                 return false;
             }
@@ -66,6 +74,30 @@ class PostService {
         try {
             const posts = await this.post.find({});
             return posts;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    public async getFollowingPosts(userId: string) {
+        try {
+            const followingPosts = await this.user
+                .findById(userId)
+                .select('following -_id')
+                .populate({
+                    path: 'following',
+                    select: 'posts -_id',
+                    populate: {
+                        path: 'posts',
+                    },
+                });
+            if (followingPosts == null) {
+                throw new Error("We can't find anything!");
+            }
+            const post = followingPosts.following.map(
+                (e: { posts: any[] }) => e.posts
+            );
+            return followingPosts.following;
         } catch (err: any) {
             throw new Error(err.message);
         }

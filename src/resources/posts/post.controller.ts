@@ -33,6 +33,11 @@ class PostController implements Controller {
             authenticatedMiddleware,
             this.getPosts
         );
+        this.router.get(
+            `${this.path}/following`,
+            authenticatedMiddleware,
+            this.getFollowingPosts
+        );
     }
 
     private NewPost = async (
@@ -79,7 +84,22 @@ class PostController implements Controller {
     ): Promise<Response | void> => {
         try {
             const posts = await this.PostService.getPosts();
-            res.status(200).json({ posts: posts });
+            res.status(200).json(posts);
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getFollowingPosts = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const followingPosts = await this.PostService.getFollowingPosts(
+                req.user.id
+            );
+            res.status(200).json(followingPosts);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }
