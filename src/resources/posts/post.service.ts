@@ -1,9 +1,7 @@
 import postModel from './post.model';
 import AwsFileUploader from '../../utils/s3';
 import Post from './post.interface';
-import User from '../users/user.interface';
 import userModel from '../users/user.model';
-import { populate } from 'dotenv';
 
 class PostService {
     private post = postModel;
@@ -41,28 +39,29 @@ class PostService {
 
     public async likePost(
         postId: string,
-        username: string
-    ): Promise<boolean | Error> {
+        userId: string
+    ): Promise<string | Error> {
         try {
             const post = await this.post.findById(postId).select('-password');
-            const user = await this.user
-                .findOne({ username: username })
-                .select('-password');
+            const user = await this.user.findById(userId).select('-password');
             if (!post || !user) {
-                return false;
+                throw new Error("Can't find a post with this id");
             }
-            const isLikedByUser = post.likes.includes(username);
+            const isLikedByUser = post.likes.includes(userId);
             if (isLikedByUser) {
-                const index = post.likes.indexOf(username);
-                post.likes.splice(index, 1);
+                const indexInPost = post.likes.indexOf(userId);
+                post.likes.splice(indexInPost, 1);
+                const indexInUser = user.likedPosts.indexOf(postId);
+                user.likedPosts.splice(indexInUser, 1);
                 await post.save();
-                return true;
+                await user.save();
+                return 'You dont like this post anymore';
             }
-            post.likes.push(username);
+            post.likes.push(userId);
             user.likedPosts.push(postId);
             await user.save();
             await post.save();
-            return true;
+            return 'you liked the post';
         } catch (err: any) {
             throw new Error(err.message);
         }
@@ -78,6 +77,23 @@ class PostService {
             throw new Error(err.message);
         }
     }
+
+    /**
+     * Get Post by id
+     */
+    public async getPostById(postId: string): Promise<Post | Error> {
+        try {
+            const post = await this.post.findById(postId).populate('likes');
+            if (!post) throw new Error('This post does not exist');
+            return post;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Get Following Posts
+     */
 
     public async getFollowingPosts(userId: string) {
         try {

@@ -6,6 +6,8 @@ import HttpException from '../../utils/exceptations/http.exception';
 import multer from 'multer';
 import multerConfig from '../../middlewares/multer.middleware';
 
+//TODO Make Error handling in all routes more efficient !
+
 class PostController implements Controller {
     public path = '/posts';
     public router = Router();
@@ -32,6 +34,11 @@ class PostController implements Controller {
             `${this.path}/`,
             authenticatedMiddleware,
             this.getPosts
+        );
+        this.router.get(
+            `${this.path}/postById/:postId`,
+            authenticatedMiddleware,
+            this.getPostById
         );
         this.router.get(
             `${this.path}/following`,
@@ -63,16 +70,13 @@ class PostController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { postId } = req.params;
-            const like = await this.PostService.likePost(
-                postId,
-                req.user.username
-            );
+            const like = await this.PostService.likePost(postId, req.user.id);
             if (!like) {
                 return res
                     .status(404)
                     .json({ status: 404, message: 'Post does not exist!' });
             }
-            res.status(201).json({ message: 'success' });
+            res.status(201).json({ message: like });
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }
@@ -87,6 +91,7 @@ class PostController implements Controller {
             res.status(200).json(posts);
         } catch (err: any) {
             next(new HttpException(400, err.message));
+            //*Handle Errors more efficient
         }
     };
 
@@ -100,6 +105,20 @@ class PostController implements Controller {
                 req.user.id
             );
             res.status(200).json(followingPosts);
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getPostById = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { postId } = req.params;
+            const post = await this.PostService.getPostById(postId);
+            res.status(200).json(post);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }
