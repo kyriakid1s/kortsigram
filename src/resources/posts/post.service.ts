@@ -42,13 +42,13 @@ class PostService {
         userId: string
     ): Promise<string | Error> {
         try {
-            const post = await this.post.findById(postId).select('-password');
+            const post = await this.post.findById(postId);
             const user = await this.user.findById(userId).select('-password');
             if (!post || !user) {
                 throw new Error("Can't find a post with this id");
             }
-            const isLikedByUser = post.likes.includes(userId);
-            if (isLikedByUser) {
+            const isAlreadyLiked = post.likes.includes(userId);
+            if (isAlreadyLiked) {
                 const indexInPost = post.likes.indexOf(userId);
                 post.likes.splice(indexInPost, 1);
                 const indexInUser = user.likedPosts.indexOf(postId);
@@ -79,11 +79,27 @@ class PostService {
     }
 
     /**
+     * Get Posts by Username
+     */
+    public async getPostsByUsername(username: string): Promise<Post[] | Error> {
+        try {
+            const posts = await this.post.find({ author: username }).populate({
+                path: 'comments',
+                select: 'createdAt -_id',
+                populate: { path: 'postedBy', select: 'username -_id ' },
+            });
+            return posts;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
      * Get Post by id
      */
     public async getPostById(postId: string): Promise<Post | Error> {
         try {
-            const post = await this.post.findById(postId).populate('likes');
+            const post = await this.post.findById(postId);
             if (!post) throw new Error('This post does not exist');
             return post;
         } catch (err: any) {
@@ -107,7 +123,7 @@ class PostService {
                         path: 'posts',
                     },
                 });
-            if (followingPosts == null) {
+            if (!followingPosts) {
                 throw new Error("We can't find anything!");
             }
             return followingPosts.following;

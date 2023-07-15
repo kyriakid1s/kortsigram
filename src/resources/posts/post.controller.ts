@@ -26,7 +26,7 @@ class PostController implements Controller {
             this.NewPost
         );
         this.router.post(
-            `${this.path}/:postId/like`,
+            `${this.path}/like/:postId`,
             authenticatedMiddleware,
             this.likePost
         );
@@ -39,6 +39,11 @@ class PostController implements Controller {
             `${this.path}/postById/:postId`,
             authenticatedMiddleware,
             this.getPostById
+        );
+        this.router.get(
+            `${this.path}/postsByUsername/:username`,
+            authenticatedMiddleware,
+            this.getPostsByUsername
         );
         this.router.get(
             `${this.path}/following`,
@@ -91,7 +96,20 @@ class PostController implements Controller {
             res.status(200).json(posts);
         } catch (err: any) {
             next(new HttpException(400, err.message));
-            //*Handle Errors more efficient
+        }
+    };
+
+    private getPostsByUsername = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const posts = await this.PostService.getPostsByUsername(username);
+            res.status(200).json({ posts: posts });
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
         }
     };
 

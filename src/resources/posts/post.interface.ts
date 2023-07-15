@@ -5,6 +5,7 @@ interface Post extends Document {
     imageURL: string;
     caption: string;
     likes: string[];
+    comments: string[];
 }
 
 export default Post;

@@ -53,7 +53,6 @@ class UserService {
     /**
      * Follow a User
      */
-
     public async followUser(
         currentUserId: string,
         usernameToFollow: string
@@ -99,6 +98,10 @@ class UserService {
             throw new Error(err.message);
         }
     }
+
+    /**
+     * Unfollow a User
+     */
     public async unfollowUser(
         currentUserId: string,
         usernameToUnfollow: string
