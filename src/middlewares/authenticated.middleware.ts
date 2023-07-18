@@ -28,7 +28,7 @@ async function authenticatedMiddleware(
             return next(new HttpException(401, 'Unauthorised'));
         }
     } catch (er: any) {
-        return next(new HttpException(401, 'Unauthorised'));
+        return next(new HttpException(401, er.message));
     }
 }
 

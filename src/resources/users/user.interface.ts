@@ -4,6 +4,7 @@ interface User extends Document {
     email: string;
     username: string;
     password: string;
+    private: boolean;
     posts: string[];
     likedPosts: string[];
     following: string[];

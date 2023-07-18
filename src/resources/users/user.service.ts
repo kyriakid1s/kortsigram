@@ -53,12 +53,19 @@ class UserService {
     /**
      * Get A User
      */
-    public async getUser(username: string) {
+    public async getUser(username: string, currentUserId: string) {
         try {
             const user = await this.user
                 .findOne({ username: username })
                 .select('-password -_id');
-            return user;
+            if (!user) throw new Error("This user doesn't exists!");
+            if (user.private === false) return user;
+            console.log(user.followers, currentUserId);
+            if (user.followers.includes(currentUserId)) {
+                return user;
+            } else {
+                throw new Error(`You don\'t follow ${username}`);
+            }
         } catch (err: any) {
             throw new Error(err.message);
         }

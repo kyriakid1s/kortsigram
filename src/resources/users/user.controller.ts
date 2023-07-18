@@ -105,7 +105,7 @@ class UserController implements Controller {
         next: NextFunction
     ): Promise<Response | void> => {
         try {
-            res.clearCookie('jwt').status(200).json({ message: 'logged out ' });
+            res.clearCookie('jwt').status(200).json({ message: 'Logged out ' });
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }
@@ -118,7 +118,7 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { username } = req.params;
-            const user = await this.UserService.getUser(username);
+            const user = await this.UserService.getUser(username, req.user.id);
             res.status(200).json(user);
         } catch (err: any) {
             next(new HttpException(400, err.message));

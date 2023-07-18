@@ -18,6 +18,11 @@ const UserSchema = new Schema(
             type: String,
             required: true,
         },
+        private: {
+            type: Boolean,
+            default: false,
+            required: true,
+        },
         posts: [
             {
                 type: mongoose.Schema.Types.ObjectId,
