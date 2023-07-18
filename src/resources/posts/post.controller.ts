@@ -31,11 +31,6 @@ class PostController implements Controller {
             this.likePost
         );
         this.router.get(
-            `${this.path}/`,
-            authenticatedMiddleware,
-            this.getPosts
-        );
-        this.router.get(
             `${this.path}/postById/:postId`,
             authenticatedMiddleware,
             this.getPostById
@@ -82,18 +77,6 @@ class PostController implements Controller {
                     .json({ status: 404, message: 'Post does not exist!' });
             }
             res.status(201).json({ message: like });
-        } catch (err: any) {
-            next(new HttpException(400, err.message));
-        }
-    };
-    private getPosts = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ): Promise<Response | void> => {
-        try {
-            const posts = await this.PostService.getPosts();
-            res.status(200).json(posts);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

@@ -51,6 +51,20 @@ class UserService {
     }
 
     /**
+     * Get A User
+     */
+    public async getUser(username: string) {
+        try {
+            const user = await this.user
+                .findOne({ username: username })
+                .select('-password -_id');
+            return user;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
      * Follow a User
      */
     public async followUser(

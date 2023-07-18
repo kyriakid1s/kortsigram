@@ -9,7 +9,7 @@ const commentModel = new Schema(
         },
         comment: {
             type: String,
-            require: [true, 'You must to comment something !'],
+            require: true,
         },
     },
     { timestamps: true }

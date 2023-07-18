@@ -52,6 +52,11 @@ class UserController implements Controller {
             authenticatedMiddleware,
             this.getFollowing
         );
+        this.router.get(
+            `${this.path}/:username`,
+            authenticatedMiddleware,
+            this.getUser
+        );
     }
 
     private register = async (
@@ -101,6 +106,20 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             res.clearCookie('jwt').status(200).json({ message: 'logged out ' });
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { username } = req.params;
+            const user = await this.UserService.getUser(username);
+            res.status(200).json(user);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

@@ -66,17 +66,6 @@ class PostService {
             throw new Error(err.message);
         }
     }
-    /**
-     * Get Posts
-     */
-    public async getPosts(): Promise<Post[] | Error> {
-        try {
-            const posts = await this.post.find({});
-            return posts;
-        } catch (err: any) {
-            throw new Error(err.message);
-        }
-    }
 
     /**
      * Get Posts by Username
@@ -85,7 +74,7 @@ class PostService {
         try {
             const posts = await this.post.find({ author: username }).populate({
                 path: 'comments',
-                select: 'createdAt -_id',
+                select: 'createdAt comment-_id',
                 populate: { path: 'postedBy', select: 'username -_id ' },
             });
             return posts;
