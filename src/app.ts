@@ -36,7 +36,8 @@ class App {
         });
     }
 
-    private initialiseDatabaseConnection(): void {
+    private async initialiseDatabaseConnection(): Promise<void> {
+        //initialise MONGODB
         const { MONGO_URL } = process.env;
         mongoose.connect(`${MONGO_URL}`);
         const db = mongoose.connection;

@@ -60,7 +60,6 @@ class UserService {
                 .select('-password -_id');
             if (!user) throw new Error("This user doesn't exists!");
             if (user.private === false) return user;
-            console.log(user.followers, currentUserId);
             if (user.followers.includes(currentUserId)) {
                 return user;
             } else {

@@ -10,6 +10,7 @@ function validateEnv(): void {
         SECRET_KEY: str(),
         BUCKET_NAME: str(),
         BUCKET_REGION: str(),
+        REDIS_PASS: str(),
     });
 }
 
