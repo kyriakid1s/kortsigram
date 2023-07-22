@@ -6,6 +6,9 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import Controller from './utils/interfaces/controller.interface';
 import errorMiddleware from './middlewares/error.middleware';
+import { createServer } from 'http';
+import Websocket from './utils/websocket/websocket';
+import MessagesSocket from './utils/websocket/orders.websocket';
 
 class App {
     public express: Application;
@@ -54,7 +57,12 @@ class App {
     }
 
     public listen(): void {
-        this.express.listen(this.port, () => {
+        const server = createServer(this.express);
+        const io = Websocket.getInstance(server);
+        io.initialiseHandlers([
+            { path: 'api/messages', handler: new MessagesSocket() },
+        ]);
+        server.listen(this.port, () => {
             console.log(`Server running on port -> ${this.port}`);
         });
     }

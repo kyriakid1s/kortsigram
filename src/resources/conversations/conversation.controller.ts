@@ -13,14 +13,18 @@ class ConversationController implements Controller {
         this.initialiseRoutes();
     }
 
-    private initialiseRoutes(): void {
-        this.router.post(`${this.path}/newConversation`),
+    private initialiseRoutes() {
+        this.router.post(
+            `${this.path}/new-conversation`,
             authenticatedMiddleware,
-            this.createConversation;
+            this.createConversation
+        );
 
-        this.router.get(`${this.path}/`),
+        this.router.get(
+            `${this.path}/`,
             authenticatedMiddleware,
-            this.getConversations;
+            this.getConversations
+        );
     }
 
     private createConversation = async (
