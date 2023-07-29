@@ -19,6 +19,7 @@ class MessageController implements Controller {
             authenticatedMiddleware,
             this.newMessage
         );
+        this.router.get(`${this.path}/`, this.test);
     }
 
     private newMessage = async (
@@ -34,6 +35,21 @@ class MessageController implements Controller {
                 message
             );
             res.status(201).json(response);
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private test = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            res.set(
+                'Content-Security-Policy',
+                "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'"
+            ).sendFile(__dirname + '/index.html');
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

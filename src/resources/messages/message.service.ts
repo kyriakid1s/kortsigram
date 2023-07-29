@@ -1,6 +1,6 @@
 import messageModel from './message.model';
 import Message from './message.interface';
-import Websocket from '../../utils/websocket/websocket';
+import Websocket from '../../utils/Websocket/websocket';
 import conversationModel from '../conversations/conversation.model';
 
 class MessageService {
@@ -29,7 +29,6 @@ class MessageService {
                     conversationId: newConversation._id,
                     message: messageBody,
                 });
-                this.sendSocket(message.message);
                 return message.populate('senderId');
             }
             const message = await this.message.create({
@@ -38,16 +37,10 @@ class MessageService {
                 conversationId: haveAlreadyConversation._id,
                 message: messageBody,
             });
-            this.sendSocket(message.message);
-            return message.populate('senderId');
+            return message.populate('senderId receiverId');
         } catch (err: any) {
             throw new Error(err.message);
         }
-    }
-
-    private sendSocket(message: string) {
-        const io = Websocket.getInstance();
-        io.of('/api/messages').emit('msg', console.log(message));
     }
 }
 

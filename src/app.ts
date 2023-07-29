@@ -7,8 +7,8 @@ import cookieParser from 'cookie-parser';
 import Controller from './utils/interfaces/controller.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import { createServer } from 'http';
-import Websocket from './utils/websocket/websocket';
-import MessagesSocket from './utils/websocket/orders.websocket';
+import Websocket from './utils/Websocket/websocket';
+import MessagesSocket from './utils/Websocket/message.websocket';
 
 class App {
     public express: Application;

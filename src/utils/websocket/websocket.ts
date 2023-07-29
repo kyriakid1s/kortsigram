@@ -1,9 +1,10 @@
 import { Server, Socket } from 'socket.io';
+import { Server as HttpServer } from 'http';
 
 class Websocket extends Server {
     private static io: Websocket;
 
-    constructor(httpServer: any) {
+    constructor(httpServer: HttpServer) {
         super(httpServer, {
             cors: {
                 origin: '*',
@@ -23,9 +24,11 @@ class Websocket extends Server {
         socketHandlers.forEach((el) => {
             let namespace = Websocket.io.of(el.path, (socket: Socket) => {
                 el.handler.handleConnection(socket);
-                namespace.on('connection', (socket) => {
-                    console.log(socket.id);
-                });
+                if (el.handler.middlewareImplementation) {
+                    namespace.use((socket, next) => {
+                        el.handler.middlewareImplementation(socket, next);
+                    });
+                }
             });
         });
     }
