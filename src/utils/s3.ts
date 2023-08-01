@@ -11,7 +11,7 @@ class AwsFileUploader {
 
     constructor() {
         this.s3 = new S3Client({
-            region: this.region,
+            region: this.region ,
             credentials: {
                 accessKeyId: this.accessKeyId,
                 secretAccessKey: this.secretAccessKey,
@@ -32,8 +32,7 @@ class AwsFileUploader {
 
             await this.s3.send(new PutObjectCommand(uploadParams));
             return `${this.bucketName}/${author}/${image.originalname}`;
-        } catch (error: any) {
-            throw new Error(error);
+        } catch (error: any) {throw new Error(error);
         }
     }
 }

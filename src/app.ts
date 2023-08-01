@@ -7,8 +7,8 @@ import cookieParser from 'cookie-parser';
 import Controller from './utils/interfaces/controller.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import { createServer } from 'http';
-import Websocket from './utils/Websocket/websocket';
-import MessagesSocket from './utils/Websocket/message.websocket';
+import { Server, Socket } from 'socket.io';
+import Websocket from './utils/websocket/websocket';
 
 class App {
     public express: Application;
@@ -40,7 +40,6 @@ class App {
     }
 
     private async initialiseDatabaseConnection(): Promise<void> {
-        //initialise MONGODB
         const { MONGO_URL } = process.env;
         mongoose.connect(`${MONGO_URL}`);
         const db = mongoose.connection;
@@ -58,10 +57,8 @@ class App {
 
     public listen(): void {
         const server = createServer(this.express);
-        const io = Websocket.getInstance(server);
-        io.initialiseHandlers([
-            { path: 'api/messages', handler: new MessagesSocket() },
-        ]);
+        const io = new Server(server);
+        const websocket = new Websocket(io);
         server.listen(this.port, () => {
             console.log(`Server running on port -> ${this.port}`);
         });

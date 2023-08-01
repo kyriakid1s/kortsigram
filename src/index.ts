@@ -17,6 +17,6 @@ const app = new App(
         new ConversationController(),
         new MessageController(),
     ],
-    Number(process.env.PORT)
+    Number(3000)
 );
 app.listen();

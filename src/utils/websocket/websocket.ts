@@ -1,34 +1,27 @@
-import { Server, Socket } from 'socket.io';
-import { Server as HttpServer } from 'http';
+import { Socket, Server } from 'socket.io';
 
-class Websocket extends Server {
-    private static io: Websocket;
+class Websocket {
+    private io: Server;
 
-    constructor(httpServer: HttpServer) {
-        super(httpServer, {
-            cors: {
-                origin: '*',
-                methods: ['GET', 'POST'],
-            },
-        });
+    constructor(io: Server) {
+        this.io = io;
+        this.handleConnection();
     }
 
-    public static getInstance(httpServer?: any): Websocket {
-        if (!Websocket.io) {
-            Websocket.io = new Websocket(httpServer);
-        }
-        return Websocket.io;
-    }
-
-    public initialiseHandlers(socketHandlers: any[]): void {
-        socketHandlers.forEach((el) => {
-            let namespace = Websocket.io.of(el.path, (socket: Socket) => {
-                el.handler.handleConnection(socket);
-                if (el.handler.middlewareImplementation) {
-                    namespace.use((socket, next) => {
-                        el.handler.middlewareImplementation(socket, next);
-                    });
-                }
+    private handleConnection(): void {
+        this.io.on('connection', (socket: Socket) => {
+            console.log(socket.id);
+            const users = [];
+            for (let [id] of this.io.of('/').sockets) {
+                users.push({ userId: id });
+            }
+            console.log(users.length);
+            socket.emit('users', users);
+            socket.emit('user connected', `${socket.id} just connected`);
+            socket.on('private message', ({ content, to }) => {
+                socket
+                    .to(to)
+                    .emit('private message', { content, from: socket.id });
             });
         });
     }
