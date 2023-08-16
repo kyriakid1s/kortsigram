@@ -6,23 +6,25 @@ class Websocket {
     constructor(io: Server) {
         this.io = io;
         this.handleConnection();
+        this.socketMiddlewares();
     }
 
     private handleConnection(): void {
         this.io.on('connection', (socket: Socket) => {
-            console.log(socket.id);
-            const users = [];
-            for (let [id] of this.io.of('/').sockets) {
-                users.push({ userId: id });
-            }
-            console.log(users.length);
-            socket.emit('users', users);
+            console.log(socket.userId);
             socket.emit('user connected', `${socket.id} just connected`);
             socket.on('private message', ({ content, to }) => {
                 socket
                     .to(to)
-                    .emit('private message', { content, from: socket.id });
+                    .emit('private message', { content, from: socket.userId });
             });
+        });
+    }
+
+    private socketMiddlewares(): void {
+        this.io.use((socket, next) => {
+            socket.userId = socket.handshake.auth.username;
+            return next();
         });
     }
 }
