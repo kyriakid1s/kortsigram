@@ -57,8 +57,9 @@ class UserService {
         try {
             const user = await this.user
                 .findOne({ username: username })
-                .select('-password -_id');
+                .select('-password ');
             if (!user) throw new Error("This user doesn't exists!");
+            if (user._id == currentUserId) return user;
             if (user.private === false) return user;
             if (user.followers.includes(currentUserId)) {
                 return user;

@@ -19,6 +19,13 @@ class MessageController implements Controller {
             authenticatedMiddleware,
             this.newMessage
         );
+
+        this.router.get(
+            `${this.path}/:conversationId/messages`,
+            authenticatedMiddleware,
+            this.getMessages
+        );
+
         this.router.get(`${this.path}/`, this.test);
     }
 
@@ -35,6 +42,22 @@ class MessageController implements Controller {
                 message
             );
             res.status(201).json(response);
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getMessages = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { conversationId } = req.params;
+            const messages = await this.MessageService.getMessages(
+                conversationId
+            );
+            res.status(200).json(messages);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

@@ -1,6 +1,5 @@
 import messageModel from './message.model';
 import Message from './message.interface';
-import Websocket from '../../utils/Websocket/websocket';
 import conversationModel from '../conversations/conversation.model';
 
 class MessageService {
@@ -29,7 +28,7 @@ class MessageService {
                     conversationId: newConversation._id,
                     message: messageBody,
                 });
-                return message.populate('senderId');
+                return message.populate('senderId receiverId', '_id username');
             }
             const message = await this.message.create({
                 senderId: senderId,
@@ -37,7 +36,30 @@ class MessageService {
                 conversationId: haveAlreadyConversation._id,
                 message: messageBody,
             });
-            return message.populate('senderId receiverId');
+            return message.populate('senderId receiverId', '_id username');
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    /**
+     * Get Messages
+     */
+    public async getMessages(
+        conversationId: string
+    ): Promise<Message[] | Error> {
+        try {
+            const currentConversation = await this.conversations.findById(
+                conversationId
+            );
+            if (!currentConversation)
+                throw new Error(
+                    "This conversation doesn't exist anymore or never existed."
+                );
+            const messages = this.message.find({
+                conversationId: currentConversation._id,
+            });
+            return messages;
         } catch (err: any) {
             throw new Error(err.message);
         }
