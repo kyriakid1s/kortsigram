@@ -106,7 +106,7 @@ export default {
                 )
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res);
+                        this.$router.push('/');
                     }
                 })
                 .catch((err) => {

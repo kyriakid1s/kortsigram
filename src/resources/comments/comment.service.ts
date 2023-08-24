@@ -14,7 +14,7 @@ class CommentService {
         postId: string
     ): Promise<Comment | Error> {
         try {
-            const commentResponse = await this.comment.create({
+            let commentResponse = await this.comment.create({
                 postedBy,
                 comment,
             });
@@ -24,6 +24,10 @@ class CommentService {
             }
             post.comments.push(commentResponse._id);
             await post.save();
+            commentResponse = await commentResponse.populate(
+                'postedBy',
+                'username -_id'
+            );
             return commentResponse;
         } catch (err: any) {
             throw new Error(err.message);

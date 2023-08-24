@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-col border-r border-slate-400">
-        <aside class="flex flex-col h-screen z-50 w-full h-full overflow-none">
+    <div class="flex flex-col border-r border-slate-400 h-screen">
+        <aside class="flex flex-col h-screen w-full h-full flex-[0_0_auto]">
             <span class="m-8">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +127,7 @@
                 <UserIcon class="w-6 h-6 mr-2" />Profile
             </section>
             <section id="sidebarButton">
-                <UserIcon class="w-6 h-6 mr-2" />New Post
+                <PlusCircleIcon class="w-6 h-6 mr-2" />New Post
             </section>
         </aside>
     </div>
@@ -140,6 +140,7 @@ import {
     PaperAirplaneIcon,
     HeartIcon,
     UserIcon,
+    PlusCircleIcon,
 } from '@heroicons/vue/24/outline';
 
 export default {
@@ -150,6 +151,7 @@ export default {
         PaperAirplaneIcon,
         HeartIcon,
         UserIcon,
+        PlusCircleIcon,
     },
     data() {
         return {};
@@ -159,6 +161,6 @@ export default {
 
 <style>
 #sidebarButton {
-    @apply text-xl my-2 mx-4 flex p-2 items-center text-left text-white hover:bg-[rgba(255,255,255,0.2)] rounded-xl;
+    @apply cursor-pointer text-xl my-2 mx-4 flex p-2 items-center text-left text-white hover:bg-[rgba(255,255,255,0.2)] rounded-xl;
 }
 </style>

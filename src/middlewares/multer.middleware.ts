@@ -1,32 +1,9 @@
-import { Request } from 'express';
-import multer, { FileFilterCallback } from 'multer';
-
-type FileNameCallback = (error: Error | null, filename: string) => void;
+import multer from 'multer';
 
 const multerConfig = {
-    storage: multer.diskStorage({
-        destination: 'uploads/',
-        filename: function (
-            req: Request,
-            file: Express.Multer.File,
-            cb: FileNameCallback
-        ) {
-            cb(null, file.originalname);
-        },
-    }),
-    fileFilter: (
-        req: Request,
-        file: Express.Multer.File,
-        cb: FileFilterCallback
-    ) => {
-        if (
-            file.mimetype === 'image/jpeg' ||
-            file.mimetype === 'image/png' ||
-            file.mimetype === 'image/peg'
-        ) {
-            return cb(null, true);
-        }
-        cb(null, false);
+    storage: multer.diskStorage({ destination: 'uploads/' }),
+    limits: {
+        fileSize: 5 * 1024 * 1024, // limit file size to 5MB
     },
 };
 

@@ -6,6 +6,6 @@ import SideBar from './components/SideBar.vue';
 <template>
     <div class="w-screen flex bg-black">
         <SideBar class="w-[15vw]" />
-        <RouterView />
+        <RouterView class="flex-auto overflow-auto" />
     </div>
 </template>

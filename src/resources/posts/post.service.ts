@@ -1,21 +1,21 @@
 import postModel from './post.model';
-import AwsFileUploader from '../../utils/s3';
+import CloudinaryUpload from '../../utils/cloudinary';
 import Post from './post.interface';
 import userModel from '../users/user.model';
 
 class PostService {
     private post = postModel;
     private user = userModel;
-    private s3Client = new AwsFileUploader();
+    private cloudinaryClient = new CloudinaryUpload();
     /**
      * Upload PostModel to Database
      */
     public async postToDatabase(
-        file: Express.Multer.File,
+        file: string,
         author: string
     ): Promise<Post | Error> {
         try {
-            const uploadedFilePath = await this.s3Client.uploadImage(
+            const uploadedFilePath = await this.cloudinaryClient.uploadImage(
                 file,
                 author
             );
@@ -110,6 +110,11 @@ class PostService {
                     select: 'posts -_id',
                     populate: {
                         path: 'posts',
+                        populate: {
+                            path: 'comments',
+                            select: 'comment postedBy createdBy',
+                            populate: { path: 'postedBy', select: 'username' },
+                        },
                     },
                 });
             if (!followingPosts) {

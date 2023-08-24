@@ -54,8 +54,9 @@ class PostController implements Controller {
     ): Promise<Response | void> => {
         try {
             const author = req.user.username;
+            console.log(req.file?.path);
             const post = await this.PostService.postToDatabase(
-                req.file as Express.Multer.File,
+                req.file?.path as string,
                 author
             );
             res.status(201).json({ post: post });
@@ -105,7 +106,10 @@ class PostController implements Controller {
             const followingPosts = await this.PostService.getFollowingPosts(
                 req.user.id
             );
-            res.status(200).json(followingPosts);
+            res.status(200).json({
+                followingPosts,
+                currentUserId: req.user.id,
+            });
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }
