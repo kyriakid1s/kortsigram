@@ -4,7 +4,9 @@
     >
         <header class="w-full flex h-10% items-center mb-3">
             <img :src="src" class="rounded-full w-[32px] h-[32px] mr-2" />
-            <b>{{ username }}</b>
+            <a :href="`http://localhost:5173/profile/${this.username}`"
+                ><b>{{ username }}</b></a
+            >
         </header>
         <main class="w-full">
             <img
@@ -41,7 +43,11 @@
         </div>
         <div class="flex-col flex w-full text-sm">
             <span v-for="comment in comments" :key="comments.id" class="mb-0.5">
-                <b>{{ comment.postedBy.username }}</b>
+                <a
+                    class="mr-1"
+                    :href="`http://localhost:5173/profile/${comment.postedBy.username}`"
+                    ><b>{{ comment.postedBy.username }}</b></a
+                >
                 {{ comment.comment }}
             </span>
             <form action="" @submit.prevent class="flex w-full items-center">
