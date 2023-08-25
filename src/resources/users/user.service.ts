@@ -57,7 +57,8 @@ class UserService {
         try {
             const user = await this.user
                 .findOne({ username: username })
-                .select('-password ');
+                .select('-password -verificationToken ')
+                .populate('posts', 'imageURL');
             if (!user) throw new Error("This user doesn't exists!");
             if (user._id == currentUserId) return user;
             if (user.private === false) return user;

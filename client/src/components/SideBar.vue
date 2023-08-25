@@ -111,7 +111,7 @@
                     </g>
                 </svg>
             </span>
-            <section id="sidebarButton">
+            <section id="sidebarButton" @click="this.$router.push('/')">
                 <HomeIcon class="w-6 h-6 mr-2" /> Home Page
             </section>
             <section id="sidebarButton">
@@ -123,12 +123,17 @@
             <section id="sidebarButton">
                 <HeartIcon class="w-6 h-6 mr-2" />Notifications
             </section>
-            <section id="sidebarButton">
+            <section id="sidebarButton" @click="this.$router.push('/profile')">
                 <UserIcon class="w-6 h-6 mr-2" />Profile
             </section>
-            <section id="sidebarButton">
+
+            <section id="sidebarButton" @click="isModalOpened = !isModalOpened">
                 <PlusCircleIcon class="w-6 h-6 mr-2" />New Post
             </section>
+            <NewPost
+                v-if="isModalOpened"
+                @close-modal="isModalOpened = !isModalOpened"
+            />
         </aside>
     </div>
 </template>
@@ -142,6 +147,7 @@ import {
     UserIcon,
     PlusCircleIcon,
 } from '@heroicons/vue/24/outline';
+import NewPost from './NewPost.vue';
 
 export default {
     name: 'SideBar',
@@ -152,10 +158,14 @@ export default {
         HeartIcon,
         UserIcon,
         PlusCircleIcon,
+        NewPost,
     },
     data() {
-        return {};
+        return {
+            isModalOpened: false,
+        };
     },
+    methods: {},
 };
 </script>
 

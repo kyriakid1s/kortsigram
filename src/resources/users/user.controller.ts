@@ -57,6 +57,11 @@ class UserController implements Controller {
             authenticatedMiddleware,
             this.getUser
         );
+        this.router.get(
+            `${this.path}`,
+            authenticatedMiddleware,
+            this.getCurrentUser
+        );
     }
 
     private register = async (
@@ -106,6 +111,22 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             res.clearCookie('jwt').status(200).json({ message: 'Logged out ' });
+        } catch (err: any) {
+            next(new HttpException(400, err.message));
+        }
+    };
+
+    private getCurrentUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const user = await this.UserService.getUser(
+                req.user.username,
+                req.user.id
+            );
+            res.status(200).json(user);
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

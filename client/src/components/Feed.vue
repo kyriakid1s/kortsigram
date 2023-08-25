@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col w-[70vw] h-screen text-white">
+    <div class="flex flex-col w-[70vw] h-screen text-white pb-5">
         <div v-for="post in posts" :key="post.id">
             <div v-for="item in post" :key="item.id">
                 <div v-for="g in item" :key="g.id">

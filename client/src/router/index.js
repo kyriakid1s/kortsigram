@@ -13,6 +13,16 @@ const router = createRouter({
             name: 'login',
             component: () => import('../components/Login.vue'),
         },
+        {
+            path: '/profile/:user?',
+            name: 'profile',
+            component: () => import('../components/Profile.vue'),
+        },
+        {
+            path: '/newPost',
+            name: 'newPost',
+            component: () => import('../components/NewPost.vue'),
+        },
     ],
 });
 
