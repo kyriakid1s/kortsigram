@@ -52,7 +52,7 @@ class ConversationController implements Controller {
             const conversations =
                 await this.ConversationService.getConversations(req.user.id);
 
-            res.status(200).json(conversations);
+            res.status(200).json({ conversations, userId: req.user.id });
         } catch (err: any) {
             next(new HttpException(400, err.message));
         }

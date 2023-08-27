@@ -28,7 +28,7 @@ class MessageService {
                     conversationId: newConversation._id,
                     message: messageBody,
                 });
-                return message.populate('senderId receiverId', '_id username');
+                return message;
             }
             const message = await this.message.create({
                 senderId: senderId,
@@ -36,7 +36,7 @@ class MessageService {
                 conversationId: haveAlreadyConversation._id,
                 message: messageBody,
             });
-            return message.populate('senderId receiverId', '_id username');
+            return message;
         } catch (err: any) {
             throw new Error(err.message);
         }

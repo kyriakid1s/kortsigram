@@ -23,6 +23,11 @@ const router = createRouter({
             name: 'newPost',
             component: () => import('../components/NewPost.vue'),
         },
+        {
+            path: '/conversations',
+            name: 'conversations',
+            component: () => import('../components/Conversations.vue'),
+        },
     ],
 });
 

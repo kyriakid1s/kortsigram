@@ -29,9 +29,11 @@ class ConversationService {
         userId: string
     ): Promise<Conversation[] | Error> {
         try {
-            const conversations = await this.conversation.find({
-                members: { $in: [userId] },
-            });
+            const conversations = await this.conversation
+                .find({
+                    members: { $in: [userId] },
+                })
+                .populate('members', 'username profilePicture');
             return conversations;
         } catch (err: any) {
             throw new Error(err.message);

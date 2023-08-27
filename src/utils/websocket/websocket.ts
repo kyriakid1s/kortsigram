@@ -11,8 +11,20 @@ class Websocket {
 
     private handleConnection(): void {
         this.io.on('connection', (socket: Socket) => {
-            console.log(socket.userId);
-            socket.emit('user connected', `${socket.id} just connected`);
+            if (socket.userId) socket.join(socket.userId);
+            const users = [];
+            for (let [id, socket] of this.io.of('/').sockets) {
+                users.push({
+                    userID: id,
+                    username: socket.userId,
+                });
+            }
+            socket.emit('users', users);
+
+            socket.broadcast.emit(
+                'user connected',
+                `${socket.userId} just connected`
+            );
             socket.on('private message', ({ content, to }) => {
                 socket
                     .to(to)
@@ -23,7 +35,7 @@ class Websocket {
 
     private socketMiddlewares(): void {
         this.io.use((socket, next) => {
-            socket.userId = socket.handshake.auth.username;
+            socket.userId = socket.handshake.auth.userId;
             return next();
         });
     }

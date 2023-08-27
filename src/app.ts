@@ -57,7 +57,9 @@ class App {
 
     public listen(): void {
         const server = createServer(this.express);
-        const io = new Server(server);
+        const io = new Server(server, {
+            cors: { origin: 'http://localhost:5173' },
+        });
         const websocket = new Websocket(io);
         server.listen(this.port, () => {
             console.log(`Server running on port -> ${this.port}`);

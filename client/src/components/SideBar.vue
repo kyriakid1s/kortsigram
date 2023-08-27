@@ -117,7 +117,10 @@
             <section id="sidebarButton">
                 <MagnifyingGlassIcon class="w-6 h-6 mr-2" />Search
             </section>
-            <section id="sidebarButton">
+            <section
+                id="sidebarButton"
+                @click="this.$router.push('/conversations')"
+            >
                 <PaperAirplaneIcon class="w-6 h-6 mr-2" /> Messages
             </section>
             <section id="sidebarButton">
